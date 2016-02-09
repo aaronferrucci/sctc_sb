@@ -1,5 +1,5 @@
 ---
-title: "SCTC Super Bowl 5k/10k"
+title: "SCTC Super Bowl 3k/10k"
 author: "Aaron Ferrucci"
 date: "February 8, 2016"
 output: html_document
