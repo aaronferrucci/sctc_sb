@@ -1,0 +1,10 @@
+---
+title: "SCTC Super Bowl 5k/10k"
+author: "Aaron Ferrucci"
+date: "February 8, 2016"
+output: html_document
+---
+
+```{r, echo=FALSE,message=FALSE}
+source("sctc_sb.R")
+```
