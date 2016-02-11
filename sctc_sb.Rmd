@@ -8,3 +8,72 @@ output: html_document
 ```{r, echo=FALSE,message=FALSE}
 source("sctc_sb.R")
 ```
+
+### 3k results
+
+`r nrow(data3k)` runners participated in the 3k. 
+
+``` {r, echo = FALSE}
+ggplot(data3k, aes(x = Gender), xlab = "Gender") +
+  geom_bar(stat = "count", aes(fill = Gender)) +
+  ggtitle("3k Gender Distribution")
+```
+
+The gender distribution for the 3k is tilted somewhat toward female.
+
+```{r, echo=FALSE}
+hist3k <- get_age_histogram(data3k) + ggtitle("3k Age Histogram")
+print(hist3k)
+```
+
+The average age of a 3k runner was `r round(mean(data3k$Age), 1)`. 
+
+The age histogram shows a pretty good age spread, from under 10 to over 80. 
+
+```{r, echo=FALSE}
+ggplot(data3k, aes(x = Gender, y = Age, color = Gender)) + geom_boxplot() + ggtitle("3k Age/Gender Boxplot")
+```
+
+Plotting gender vs. age as a box plot shows that female runners are generally younger, and there's a bit more variance in age among the male runners.
+
+```{r, echo=FALSE,message=FALSE}
+plot3k <- get_plot(data3k, max_age) + ggtitle("3k")
+print(plot3k)
+```
+
+With a small number of runners, we don't really have meaningful statistics, but nonetheless there seems to be a general upward of run time vs. age. 
+
+### 10k Results
+
+`r nrow(data10k)` runners participated in the 10k.
+
+``` {r, echo = FALSE}
+ggplot(data10k, aes(x = Gender), xlab = "Gender") +
+  geom_bar(stat = "count", aes(fill = Gender)) +
+  ggtitle("10k Gender Distribution")
+```
+
+The gender balance for the 10k is tilted more toward male than the 3k was toward female.
+
+```{r, echo=FALSE}
+hist10k <- get_age_histogram(data10k) + ggtitle("10k Age Histogram")
+print(hist10k)
+```
+
+The average age was `r round(mean(data10k$Age), 1)`.
+
+The age histogram for the 10k race is something of a bell curve. There's good representation in the 45-60 group.
+
+```{r, echo=FALSE}
+ggplot(data10k, aes(x = Gender, y = Age, color = Gender)) + geom_boxplot() + ggtitle("10k Age/Gender Boxplot")
+```
+
+As in the 3k, male 10k runners are older, on average, but it's not as strong a difference.
+
+```{r, echo=FALSE,message=FALSE}
+plot10k <- get_plot(data10k, max_age) + ggtitle("10k")
+print(plot10k)
+```
+
+Again, there's a general upward trend of runtime vs. age, and males are typically faster.
+
