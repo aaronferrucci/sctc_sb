@@ -13,8 +13,9 @@ get_plot <- function(data, max_age) {
 
 year <- 2016
 the_data <- get_data_from_url(year)
-data3k <- the_data[[1]]
-data10k <- the_data[[2]]
+data1k <- the_data[[1]]
+data3k <- the_data[[2]]
+data10k <- the_data[[3]]
 max_age <- max(data3k$Age, data10k$Age)
 
 get_age_histogram <- function(data) {

@@ -1,5 +1,5 @@
 ---
-title: "SCTC Super Bowl 3k/10k"
+title: "SCTC Super Bowl 1k/3k/10k"
 author: "Aaron Ferrucci"
 date: "February 8, 2016"
 output: html_document
@@ -7,6 +7,18 @@ output: html_document
 
 ```{r, echo=FALSE,message=FALSE}
 source("sctc_sb.R")
+```
+On Saturday February 7, 2016, the Santa Cruz Track Club organized three footraces on the west side of Santa Cruz. The weather was perfect - cool and sunny, and it as a nice casual event. My son Ian and I participated in the 10k, which was a nice flat run from the back entrance of Natural Bridges State Park, down West Cliff drive past the lighthouse, almost to the Dream Inn, and then back along the same course.
+
+The SCTC posted the race results online, so I decided to do a little data exploration and analysis.
+
+First, some basic facts.
+
+### Where runners are from
+``` {r, echo = FALSE}
+ggplot(data1k, aes(x = City)) + geom_bar() + theme(axis.text.x = element_text(angle = 90)) + ggtitle("1k Runner City")
+ggplot(data3k, aes(x = City)) + geom_bar() + theme(axis.text.x = element_text(angle = 90)) + ggtitle("3k Runner City")
+ggplot(data10k, aes(x = City)) + geom_bar() + theme(axis.text.x = element_text(angle = 90)) + ggtitle("10k Runner City")
 ```
 
 ### 3k results
