@@ -194,6 +194,18 @@ get_data_from_url <- function(year) {
   data1k <- parseit(data1k, year, "1k")
   data1k <- clean_data(data1k, "1k")
 
+  # data1k fields are a subset; fill in the missing fields
+  data1k$Age.Rank <- paste0(data1k$Rank, "/", nrow(data1k))
+  seconds_per_mile <- round(data1k$Time / 0.6214, 0)
+  minutes <- as.integer(seconds_per_mile / 60)
+  seconds <- seconds_per_mile %% 60
+  prefix <- ifelse(seconds < 10, "0", "")
+  data1k$Pace <- paste0(minutes, ":", prefix, seconds)
+
   return(list(data1k, data3k, data10k))
+}
+
+get_wide_data <- function(data1k, data3k, data10k) {
+
 }
 
