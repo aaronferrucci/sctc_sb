@@ -8,18 +8,58 @@ output: html_document
 ```{r, echo=FALSE,message=FALSE}
 source("sctc_sb.R")
 ```
-On Saturday February 7, 2016, the Santa Cruz Track Club organized three footraces on the west side of Santa Cruz. The weather was perfect - cool and sunny, and it as a nice casual event. My son Ian and I participated in the 10k, which was a nice flat run from the back entrance of Natural Bridges State Park, down West Cliff drive past the lighthouse, almost to the Dream Inn, and then back along the same course.
+On Saturday February 7, 2016, the Santa Cruz Track Club organized three footraces on the west side of Santa Cruz. The weather was perfect - cool and sunny, and it as a nice casual event. My son and I participated in the 10k, which was a nice flat run from the back entrance of Natural Bridges State Park, down West Cliff drive past the lighthouse, almost to the Dream Inn, and then back along the same course.
 
 The SCTC posted the race results online, so I decided to do a little data exploration and analysis.
 
 First, some basic facts.
 
+* Number of participants (all races): `r nrow(alldata)`
+* Age range of participants: `r min(alldata$Age)` to `r max(alldata$Age)`
+    * 1k age range: `r min(data1k$Age)` to `r max(data1k$Age)` (I think some strollers were involved here)
+    * 3k age range: `r min(data3k$Age)` to `r max(data3k$Age)`
+    * 10k age range: `r min(data10k$Age)` to `r max(data10k$Age)`
+
 ### Where runners are from
+The data lists a city for each runner (but not state or country). Looking over the list, I see mostly identifiably California towns, with a few exceptions (Lahaina, Tucson)
+
 ``` {r, echo = FALSE}
-ggplot(data1k, aes(x = City)) + geom_bar() + theme(axis.text.x = element_text(angle = 90)) + ggtitle("1k Runner City")
-ggplot(data3k, aes(x = City)) + geom_bar() + theme(axis.text.x = element_text(angle = 90)) + ggtitle("3k Runner City")
-ggplot(data10k, aes(x = City)) + geom_bar() + theme(axis.text.x = element_text(angle = 90)) + ggtitle("10k Runner City")
+print(get_city_histogram(alldata))
 ```
+
+This chart shows where runners are from, broken down by race type. It's not surprising to see Santa Cruz as the top entry, and cities in Santa Cruz County strongly represented. San Jose and other cities nearby show up in the top 10, and there's a long tail of cities who sent only a single runner.
+
+Notice that the 1k runners are all from Santa Cruz County, except for one from San Jose.
+
+### 1k results
+
+`r nrow(data1k)` runners participated in the 1k.
+
+``` {r, echo = FALSE}
+ggplot(data1k, aes(x = Gender), xlab = "Gender") +
+  geom_bar(stat = "count", aes(fill = Gender)) +
+  ggtitle("1k Gender Distribution")
+```
+
+The gender balance for the 1k tilted strongly toward the boys.
+
+```{r, echo=FALSE}
+hist1k <- get_age_histogram(data1k, 1) + ggtitle("1k Age Histogram")
+print(hist1k)
+```
+
+The histogram clearly shows that the 1k was a kids' event. The average age of a 1k runner was `r round(mean(data1k$Age), 1)`. The older runners in the age range tend to be boys.
+
+```{r, echo=FALSE,message=FALSE}
+plot1k <- get_plot(data1k) + ggtitle("1k")
+print(plot1k)
+```
+
+Individual runners are points in the plot; the lines show an average or trend line over the data.
+
+At this age, being older is an advantage. It's hard to tell if this is because (in this data set) older runners tend to be boys, and boys might be faster, or if it's simply a matter of being older.
+
+I am guessing that the three girls aged 3 and under were riding in strollers, but I didn't see the end of the 1k.
 
 ### 3k results
 
@@ -34,7 +74,7 @@ ggplot(data3k, aes(x = Gender), xlab = "Gender") +
 The gender distribution for the 3k is tilted somewhat toward female.
 
 ```{r, echo=FALSE}
-hist3k <- get_age_histogram(data3k) + ggtitle("3k Age Histogram")
+hist3k <- get_age_histogram(data3k, 5) + ggtitle("3k Age Histogram")
 print(hist3k)
 ```
 
@@ -42,18 +82,12 @@ The average age of a 3k runner was `r round(mean(data3k$Age), 1)`.
 
 The age histogram shows a pretty good age spread, from under 10 to over 80. 
 
-```{r, echo=FALSE}
-ggplot(data3k, aes(x = Gender, y = Age, color = Gender)) + geom_boxplot() + ggtitle("3k Age/Gender Boxplot")
-```
-
-Plotting gender vs. age as a box plot shows that female runners are generally younger, and there's a bit more variance in age among the male runners.
-
 ```{r, echo=FALSE,message=FALSE}
-plot3k <- get_plot(data3k, max_age) + ggtitle("3k")
+plot3k <- get_plot(data3k) + ggtitle("3k")
 print(plot3k)
 ```
 
-With a small number of runners, we don't really have meaningful statistics, but nonetheless there seems to be a general upward of run time vs. age. 
+With a small number of runners, we don't really have meaningful statistics, but nonetheless there seems to be a general upward trend of run time vs. age - except among women 50 years old and older!
 
 ### 10k Results
 
@@ -68,7 +102,7 @@ ggplot(data10k, aes(x = Gender), xlab = "Gender") +
 The gender balance for the 10k is tilted more toward male than the 3k was toward female.
 
 ```{r, echo=FALSE}
-hist10k <- get_age_histogram(data10k) + ggtitle("10k Age Histogram")
+hist10k <- get_age_histogram(data10k, 5) + ggtitle("10k Age Histogram")
 print(hist10k)
 ```
 
@@ -76,16 +110,15 @@ The average age was `r round(mean(data10k$Age), 1)`.
 
 The age histogram for the 10k race is something of a bell curve. There's good representation in the 45-60 group.
 
-```{r, echo=FALSE}
-ggplot(data10k, aes(x = Gender, y = Age, color = Gender)) + geom_boxplot() + ggtitle("10k Age/Gender Boxplot")
-```
-
-As in the 3k, male 10k runners are older, on average, but it's not as strong a difference.
-
 ```{r, echo=FALSE,message=FALSE}
-plot10k <- get_plot(data10k, max_age) + ggtitle("10k")
+plot10k <- get_plot(data10k) + ggtitle("10k")
 print(plot10k)
 ```
 
 Again, there's a general upward trend of runtime vs. age, and males are typically faster.
+
+That wraps it up! If I do another revision, I could add an appendix on the web scraping and data cleaning techniques I used - it was a pretty tidy data set, but I did have to filter and rearrange things a bit.
+
+
+
 

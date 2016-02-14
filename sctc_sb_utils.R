@@ -89,6 +89,7 @@ clean_data <- function(data, type) {
   data$City <- gsub(" +", " ", data$City)
   # Fix a typo: "Aptos,"
   data$City <- gsub(",", "", data$City)
+  data$City <- gsub("^$", "(none)", data$City)
 
   # Keep a copy of the city as a character array.
   data$Origin <- data$City
@@ -177,6 +178,7 @@ get_data_from_url <- function(year) {
   data3k <- parseit(data3k, year, "3k/10k")
   data3k <- discard_blanks(data3k)
   data3k <- clean_data(data3k, "3k/10k")
+  data3k$Race <- "3k"
   
   data10k <- xmlValue(pres[[3]])
   data10k <- read_raw(data10k)
@@ -184,6 +186,7 @@ get_data_from_url <- function(year) {
   data10k <- discard_blanks(data10k)
   data10k <- parseit(data10k, year, "3k/10k")
   data10k <- clean_data(data10k, "3k/10k")
+  data10k$Race <- "10k"
 
   data1k <- xmlValue(pres[[6]])
   data1k <- read_raw(data1k)
@@ -193,6 +196,7 @@ get_data_from_url <- function(year) {
   data1k <- discard_blanks(data1k)
   data1k <- parseit(data1k, year, "1k")
   data1k <- clean_data(data1k, "1k")
+  data1k$Race <- "1k"
 
   # data1k fields are a subset; fill in the missing fields
   data1k$Age.Rank <- paste0(data1k$Rank, "/", nrow(data1k))
@@ -202,7 +206,9 @@ get_data_from_url <- function(year) {
   prefix <- ifelse(seconds < 10, "0", "")
   data1k$Pace <- paste0(minutes, ":", prefix, seconds)
 
-  return(list(data1k, data3k, data10k))
+  alldata <- rbind(data1k, data3k, data10k)
+
+  return(list(data1k, data3k, data10k, alldata))
 }
 
 get_wide_data <- function(data1k, data3k, data10k) {
