@@ -4,6 +4,32 @@ library(gridExtra)
 library(RCurl)
 library(XML)
 
+min_pace <- function(data) {
+  val <- min(data$Minutes.Per.Mile)
+  return(pacestr(val))
+}
+
+max_pace <- function(data) {
+  val <- max(data$Minutes.Per.Mile)
+  return(pacestr(val))
+}
+
+time_to_pace <- function(seconds, km) {
+  seconds_per_mile <- seconds / 0.6214 / km
+  pace <- seconds_per_mile / 60
+  return(pace)
+}
+
+pacestr <- function(minutes_per_mile) {
+  minutes <- as.integer(minutes_per_mile)
+  seconds <- round(minutes_per_mile, digits = 0)
+  second_prefix <- ifelse(seconds < 10, "0", "")
+  seconds <- paste0(second_prefix, seconds)
+
+  pace <- paste(minutes, seconds, sep=":")
+  return(pace)
+}
+
 timestr <- function(seconds) {
   hours <- as.integer(seconds / 3600)
   seconds <- seconds - hours * 3600
@@ -37,9 +63,9 @@ to_seconds <- function(x) {
 # 3k/10k:
 # "    1   1/11   CHRISTOPHER RATLIFF  45 M SANTA CRUZ        37:33  6:03 "
 
-clean_line <- function(line, year, type) {
+clean_line <- function(line, year, km) {
   fields <- c(as.character())
-  if (type == "3k/10k") {
+  if (km == 3 | km == 10) {
     starts <- c(1,  6, 12, 37, 39, 41, 58, 66)
     stops <-  c(5, 15, 35, 38, 40, 56, 64, 70)
   } else {
@@ -59,8 +85,8 @@ clean_line <- function(line, year, type) {
   return(fields)
 }
 
-clean_data <- function(data, type) {
-  if (type == "3k/10k") {
+clean_data <- function(data, km) {
+  if (km == 3 | km == 10) {
     the_names <-
       c("Rank", "Age.Rank", "Name", "Age", "Gender", "City", "Time", "Pace")
   } else {
@@ -69,7 +95,7 @@ clean_data <- function(data, type) {
   names(data) <- the_names
   data$Name <- str_trim(data$Name)
 
-  if (type == "3k/10k") {
+  if (km == 3 | km == 10) {
     data$Age.Rank <- str_trim(data$Age.Rank)
     data$Pace <- str_trim(data$Pace)
   }
@@ -89,18 +115,18 @@ clean_data <- function(data, type) {
   data$City <- gsub(" +", " ", data$City)
   # Fix a typo: "Aptos,"
   data$City <- gsub(",", "", data$City)
+  # Blank city: "(none)"
   data$City <- gsub("^$", "(none)", data$City)
 
-  # Keep a copy of the city as a character array.
-  data$Origin <- data$City
-
   data$City <- factor(data$City)
+
+  data$Minutes.Per.Mile <- time_to_pace(data$Time, km)
   return(data)
 }
 
-parseit <- function(data, year, type) {
+parseit <- function(data, year, km) {
   len <- length(data)
-  if (type == "3k/10k") {
+  if (km == 3 | km == 10) {
     the_names <- 
       c("Rank", "Age.Rank", "Name", "Age", "Gender", "City", "Time", "Pace")
     newdata <- data.frame(stringsAsFactors=FALSE,
@@ -130,7 +156,7 @@ parseit <- function(data, year, type) {
 
   for (i in 1:len) {
     line <- data[i]
-    newrow <- clean_line(line, year, type)
+    newrow <- clean_line(line, year, km)
     newdata[i, ] <- newrow
   }
 
@@ -175,17 +201,17 @@ get_data_from_url <- function(year) {
   data3k <- xmlValue(pres[[2]])
   data3k <- read_raw(data3k)
   data3k <- discard_header(data3k)
-  data3k <- parseit(data3k, year, "3k/10k")
+  data3k <- parseit(data3k, year, 3)
   data3k <- discard_blanks(data3k)
-  data3k <- clean_data(data3k, "3k/10k")
+  data3k <- clean_data(data3k, 3)
   data3k$Race <- "3k"
   
   data10k <- xmlValue(pres[[3]])
   data10k <- read_raw(data10k)
   data10k <- discard_header(data10k)
   data10k <- discard_blanks(data10k)
-  data10k <- parseit(data10k, year, "3k/10k")
-  data10k <- clean_data(data10k, "3k/10k")
+  data10k <- parseit(data10k, year, 10)
+  data10k <- clean_data(data10k, 10)
   data10k$Race <- "10k"
 
   data1k <- xmlValue(pres[[6]])
@@ -194,8 +220,8 @@ get_data_from_url <- function(year) {
   data1k <- discard_header(data1k)
   # ... and discard any remaining blank lines.
   data1k <- discard_blanks(data1k)
-  data1k <- parseit(data1k, year, "1k")
-  data1k <- clean_data(data1k, "1k")
+  data1k <- parseit(data1k, year, 1)
+  data1k <- clean_data(data1k, 1)
   data1k$Race <- "1k"
 
   # data1k fields are a subset; fill in the missing fields

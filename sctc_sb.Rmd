@@ -19,6 +19,10 @@ First, some basic facts.
     * 1k age range: `r min(data1k$Age)` to `r max(data1k$Age)` (I think some strollers were involved here)
     * 3k age range: `r min(data3k$Age)` to `r max(data3k$Age)`
     * 10k age range: `r min(data10k$Age)` to `r max(data10k$Age)`
+* Running paces (minutes per mile) ranged from `r min_pace(alldata)` to `r max_pace(alldata)`
+    * 1k pace range: `r min_pace(data1k)` to `r max_pace(data1k)`
+    * 3k pace range: `r min_pace(data3k)` to `r max_pace(data3k)`
+    * 10k pace range: `r min_pace(data10k)` to `r max_pace(data10k)`
 
 ### Where runners are from
 The data lists a city for each runner (but not state or country). Looking over the list, I see mostly identifiably California towns, with a few exceptions (Lahaina, Tucson)
