@@ -8,7 +8,7 @@ output: html_document
 ```{r, echo=FALSE,message=FALSE}
 source("sctc_sb.R")
 ```
-On Saturday February 7, 2016, the Santa Cruz Track Club organized three footraces on the west side of Santa Cruz. The weather was perfect - cool and sunny, and it as a nice casual event. My son and I participated in the 10k, which was a nice flat run from the back entrance of Natural Bridges State Park, down West Cliff drive past the lighthouse, almost to the Dream Inn, and then back along the same course.
+On Saturday February 7, 2016, the Santa Cruz Track Club organized three footraces on the west side of Santa Cruz. The weather was perfect - cool and sunny, and it was a nice casual event. My son and I participated in the 10k, which was a nice flat run from the back entrance of Natural Bridges State Park, down West Cliff drive past the lighthouse, almost to the Dream Inn, and then back along the same course.
 
 The SCTC posted the race results online, so I decided to do a little data exploration and analysis.
 
@@ -61,9 +61,9 @@ print(plot1k)
 
 Individual runners are points in the plot; the lines show an average or trend line over the data.
 
-At this age, being older is an advantage. It's hard to tell if this is because (in this data set) older runners tend to be boys, and boys might be faster, or if it's simply a matter of being older.
+In this age range, being older is an advantage. It's hard to tell if this is because (in this data set) older runners tend to be boys, and boys might be faster, or if it's simply a matter of being older.
 
-I am guessing that the three girls aged 3 and under were riding in strollers, but I didn't see the end of the 1k.
+I am guessing that the three girls aged 3 and under were riding in strollers, but I didn't see it myself.
 
 ### 3k results
 
